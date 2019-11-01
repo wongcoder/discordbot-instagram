@@ -89,7 +89,7 @@ class MyClient(discord.Client):
             # await message.channel.send('Did it work?')
         elif message.content == '$test':
             await message.channel.send('I am still functional! Thanks for checking on me, uwu')
-        elif message.content == 'gods lesson'
+        elif message.content == 'gods lesson':
             await message.channel.send('Step 1: Dump your girl(s). Step 2: Acquire god pussy. Let it be put on the record.')
         else:
             pass
