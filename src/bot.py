@@ -32,7 +32,7 @@ print(token) # technically an unsafe operation but okay
 client = discord.Client()
 
 # globals
-latestText = 'None'
+latest_url = 'None'
 QUERYING_SPEED = 15
 
 def formatPost(post):
@@ -73,13 +73,13 @@ class MyClient(discord.Client):
             async def poller():
                 # don't forget to repoll!f
                 while not self.is_closed():
-                    global latestText
+                    global latest_url
                     post = get_latest_post(hashtag.content)
                     text, url = formatPost(post)
-                    if latestText != text:
-                        print('current latesttext ' + latestText)
+                    if latest_url != text:
+                        print('current latesttext ' + latest_url)
                         print('new post? ' + text)
-                        latestText = text
+                        latest_url = url
                         await message.channel.send(instarole + text + url)
                     print('attempted a query')
                     await asyncio.sleep(QUERYING_SPEED)
