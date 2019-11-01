@@ -33,8 +33,7 @@ client = discord.Client()
 latestPost = None
 
 def formatPost(post):
-    caption = post['edge_media_to_caption']['edges'][0]['node']['text']
-    text = "> " + caption
+    text = post['edge_media_to_caption']['edges'][0]['node']['text']
     url = 'https://www.instagram.com/p/' + post['shortcode'] + '/'
     return text, url
 
@@ -53,10 +52,20 @@ class MyClient(discord.Client):
         if message.content.startswith('$fetch') and channel.permissions_for(message.author).administrator == True :
             
             await message.channel.send('Please enter the hashtag.')
+
+            def is_same_author(m):
+                return m.author == message.author
+
             try:
-                hashtag = await self.wait_for('message', timeout=5.0)
+                hashtag = await self.wait_for('message', check=is_same_author, timeout=5.0)
             except asyncio.TimeoutError:
                 return await channel.send('Sorry, you took too long.')
+            
+            instarole = 'Please add an instasquad role to be mentioned.'
+            for role in message.guild.roles:
+                print(role.name)
+                if role.name == 'instasquad':
+                    instarole = role.mention
 
             async def poller():
                 global latestPost
@@ -67,8 +76,7 @@ class MyClient(discord.Client):
                 while not self.is_closed():
                     if latestPost != post:
                         latestPost = post 
-                        await message.channel.send(text + url)
-
+                        await message.channel.send(instarole + text + url)
                     await asyncio.sleep(60)
                 
             self.bg_task = self.loop.create_task(poller())
