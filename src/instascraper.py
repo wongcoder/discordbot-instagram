@@ -30,10 +30,10 @@ if __name__ == "__main__":
     print('Running insta_scraper() test')
     test = insta_scraper('apples')
     if len(test) > 0: 
-        print('Passed instascraper test!' # can fail even if function works
+        print('Passed instascraper test!') # can fail even if function works
     
     # unit test latest_post
-    print('Running latest_post test')
+    print('Running latest_post() test')
     latest_post = get_latest_post('balisongsale')
     print(str(latest_post))
-    print('If the above wasnt None, it passed!'
+    print('If the above wasnt None, it passed!')
