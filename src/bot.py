@@ -76,7 +76,7 @@ class MyClient(discord.Client):
                     global latest_url
                     post = get_latest_post(hashtag.content)
                     text, url = formatPost(post)
-                    if latest_url != text:
+                    if latest_url != url:
                         print('current latesttext ' + latest_url)
                         print('new post? ' + text)
                         latest_url = url
