@@ -23,9 +23,17 @@ def get_latest_post(searched_tag):
     else:
         return None
 
+
 if __name__ == "__main__":
-    tag = str(input('Enter the hashtag:'))
-    print('Collecting data....')
-    print('Data collection has been completed.')
-    latest_post = get_latest_post(tag)
+    
+    # unit test insta_scraper
+    print('Running insta_scraper() test')
+    test = insta_scraper('apples')
+    if len(test) > 0: 
+        print('Passed instascraper test!' # can fail even if function works
+    
+    # unit test latest_post
+    print('Running latest_post test')
+    latest_post = get_latest_post('balisongsale')
     print(str(latest_post))
+    print('If the above wasnt None, it passed!'
