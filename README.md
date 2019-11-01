@@ -1,7 +1,7 @@
 # discordbot-instagram
 Make a Discord bot that'll auto paste a link that matches a tag or a description
 
-![Sample Image] (./sample_images/sample.png)
+![Sample Image](https://raw.githubusercontent.com/wongcoder/discordbot-instagram/master/sample_images/sample.png)
 
 # Deploying to AWS
 When you're deploying to AWS, make sure you create a .env.
