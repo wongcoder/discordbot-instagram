@@ -30,7 +30,10 @@ print(token) # technically an unsafe operation but okay
 
 # Init Discord client
 client = discord.Client()
-latestPost = None
+
+# globals
+latestText = 'None'
+QUERYING_SPEED = 15
 
 def formatPost(post):
     text = post['edge_media_to_caption']['edges'][0]['node']['text']
@@ -68,22 +71,24 @@ class MyClient(discord.Client):
                     instarole = role.mention
 
             async def poller():
-                global latestPost
-                post = get_latest_post(hashtag.content)
-                text, url = formatPost(post)
-
                 # don't forget to repoll!f
                 while not self.is_closed():
-                    if latestPost != post:
-                        latestPost = post 
+                    global latestText
+                    post = get_latest_post(hashtag.content)
+                    text, url = formatPost(post)
+                    if latestText != text:
+                        print('current latesttext ' + latestText)
+                        print('new post? ' + text)
+                        latestText = text
                         await message.channel.send(instarole + text + url)
-                    await asyncio.sleep(60)
+                    print('attempted a query')
+                    await asyncio.sleep(QUERYING_SPEED)
                 
             self.bg_task = self.loop.create_task(poller())
 
             # await message.channel.send('Did it work?')
-        elif message.content == 'bad word':
-            await message.channel.send('Hey thats racist you cant say that!')
+        elif message.content == '$test':
+            await message.channel.send('I am still functional! Thanks for checking on me, uwu')
         else:
             pass
     
