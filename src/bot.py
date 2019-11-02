@@ -72,7 +72,7 @@ class MyClient(discord.Client):
 
             async def poller():
                 # don't forget to repoll!f
-                while not self.is_closed():
+                while True:
                     global latest_url
                     post = get_latest_post(hashtag.content)
                     text, url = formatPost(post)
@@ -80,10 +80,9 @@ class MyClient(discord.Client):
                         print('current latesttext ' + latest_url)
                         print('new post? ' + text)
                         latest_url = url
-                        await message.channel.send(instarole + text + url)
+                        await message.channel.send(instarole + "\n" + text + " " + url)
                     print('attempted a query')
                     await asyncio.sleep(QUERYING_SPEED)
-                
             self.bg_task = self.loop.create_task(poller())
 
             # await message.channel.send('Did it work?')
