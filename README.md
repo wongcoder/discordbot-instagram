@@ -2,6 +2,7 @@
 Make a Discord bot that'll auto paste a link that matches a tag or a description.
 
 Here's it working in action!
+
 ![Sample Image](https://raw.githubusercontent.com/wongcoder/discordbot-instagram/master/sample_images/sample.png)
 
 # Deploying to AWS
