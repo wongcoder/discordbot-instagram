@@ -6,18 +6,27 @@ from time import sleep
 # should be private but idk python syntax
 def insta_scraper(searched_tag):
     url = 'https://www.instagram.com/explore/tags/'+ searched_tag + '/?__a=1'
-    response = requests.get(url)
-    data = response.json()
-    # get json data from requests library
+    try:  
+        response = requests.get(url, timeout=5)
+    except requests.Timeout:
+        print('request timed out')
+        return []
+    else:
+        # get json data from requests library
+        data = response.json()
 
-    posts = data['graphql']['hashtag']['edge_hashtag_to_media']['edges']
+        posts = data['graphql']['hashtag']['edge_hashtag_to_media']['edges']
 
-    cleaned_posts = [i['node'] for i in posts]
-    return cleaned_posts
+        cleaned_posts = [i['node'] for i in posts]
+        return cleaned_posts
+    print('Out of scope error?')
+    return []
 
 # export
 def get_latest_post(searched_tag):
-    posts = insta_scraper(searched_tag)
+    posts = []
+    while len(posts) == 0: 
+        posts = insta_scraper(searched_tag)
     if posts:
         return posts[0]
     else:
