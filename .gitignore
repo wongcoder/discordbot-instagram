@@ -1,4 +1,4 @@
 # ignore environment variables
 .env
-nohup.out
+**/nohup.out
 **/__pycache__/*
