@@ -24,9 +24,9 @@ def insta_scraper(searched_tag):
 
 # export
 def get_latest_post(searched_tag):
-    posts = []
+    posts = insta_scraper(searched_tag)
     while len(posts) == 0: 
-        print('Posts were empty. Trying again.')
+        print('Posts were empty... trying again')
         posts = insta_scraper(searched_tag)
     return posts[0]
 

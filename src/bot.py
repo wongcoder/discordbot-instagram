@@ -3,21 +3,9 @@ import os
 import discord
 import asyncio
 from instascraper import get_latest_post
-from dotenv import load_dotenv
-from setup import first_run
+from setup import get_env
 
-# fetch token
-token = 'Token is out of scope, try to debug' # init as empty
-load_dotenv()
-if not os.getenv('DISCORD_TOKEN'):
-    # run initial setup
-    first_run()
-
-    load_dotenv() # reinit .env
-    token = os.getenv('DISCORD_TOKEN')
-else:
-    token = os.getenv('DISCORD_TOKEN')
-print(token) # technically an unsafe operation but okay
+DISCORD_TOKEN, USER_ID = get_env()
 
 # Init Discord client
 client = discord.Client()
@@ -43,8 +31,8 @@ class MyClient(discord.Client):
             return 
 
         channel = message.channel
-        if message.content.startswith('$fetch') and channel.permissions_for(message.author).administrator == True :
-            
+        if message.content.startswith('$fetch') and (channel.permissions_for(message.author).administrator == True or message.author.id == USER_ID) :
+            print('evaluate as true')
             await message.channel.send('Please enter the hashtag.')
 
             def is_same_author(m):
@@ -86,4 +74,4 @@ class MyClient(discord.Client):
     
 
 client = MyClient()
-client.run(token)
+client.run(DISCORD_TOKEN)
