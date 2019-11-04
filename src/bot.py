@@ -6,15 +6,6 @@ from instascraper import get_latest_post
 from dotenv import load_dotenv
 from setup import first_run
 
-# Helper function to create an interval similar to Javascript
-def set_interval(func, sec):
-    def func_wrapper():
-        set_interval(func, sec)
-        func()
-    t = threading.Timer(sec, func_wrapper)
-    t.start()
-    return t
-
 # fetch token
 token = 'Token is out of scope, try to debug' # init as empty
 load_dotenv()

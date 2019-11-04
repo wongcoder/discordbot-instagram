@@ -8,8 +8,8 @@ def insta_scraper(searched_tag):
     url = 'https://www.instagram.com/explore/tags/'+ searched_tag + '/?__a=1'
     try:  
         response = requests.get(url, timeout=5)
-    except requests.Timeout:
-        print('request timed out')
+    except:
+        print('request failed')
         return []
     else:
         # get json data from requests library
@@ -26,11 +26,9 @@ def insta_scraper(searched_tag):
 def get_latest_post(searched_tag):
     posts = []
     while len(posts) == 0: 
+        print('Posts were empty. Trying again.')
         posts = insta_scraper(searched_tag)
-    if posts:
-        return posts[0]
-    else:
-        return None
+    return posts[0]
 
 
 if __name__ == "__main__":
