@@ -1,22 +1,22 @@
 # Used InstaData as a frame of reference https://github.com/hindamosh/InstaData
 
 import requests
-from time import sleep 
+from datetime import datetime
 
 # should be private but idk python syntax
 def insta_scraper(searched_tag):
+    print('Attempting to search')
+    print(datetime.now())
     url = 'https://www.instagram.com/explore/tags/'+ searched_tag + '/?__a=1'
     try:  
+        # get json data from requests library
         response = requests.get(url, timeout=5)
+        data = response.json()
     except:
         print('request failed')
         return []
     else:
-        # get json data from requests library
-        data = response.json()
-
         posts = data['graphql']['hashtag']['edge_hashtag_to_media']['edges']
-
         cleaned_posts = [i['node'] for i in posts]
         return cleaned_posts
     print('Out of scope error?')
@@ -25,6 +25,7 @@ def insta_scraper(searched_tag):
 # export
 def get_latest_post(searched_tag):
     posts = insta_scraper(searched_tag)
+    print(insta_scraper)
     while len(posts) == 0: 
         print('Posts were empty... trying again')
         posts = insta_scraper(searched_tag)

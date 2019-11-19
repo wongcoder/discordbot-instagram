@@ -12,7 +12,7 @@ client = discord.Client()
 
 # globals
 latest_url = 'None'
-QUERYING_SPEED = 15
+QUERYING_SPEED = 5
 
 def formatPost(post):
     text = post['edge_media_to_caption']['edges'][0]['node']['text']
@@ -60,7 +60,6 @@ class MyClient(discord.Client):
                         print('new post? ' + text)
                         latest_url = url
                         await message.channel.send(instarole + "\n" + text + " " + url)
-                    print('attempted a query')
                     await asyncio.sleep(QUERYING_SPEED)
             self.bg_task = self.loop.create_task(poller())
 
