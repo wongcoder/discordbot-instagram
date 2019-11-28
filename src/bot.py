@@ -17,7 +17,8 @@ QUERYING_SPEED = 5
 def formatPost(post):
     text = post['edge_media_to_caption']['edges'][0]['node']['text']
     url = 'https://www.instagram.com/p/' + post['shortcode'] + '/'
-    return text, url
+    author = post['owner']['id']
+    return text, url, author
 
 class MyClient(discord.Client):
     # load script
@@ -54,10 +55,12 @@ class MyClient(discord.Client):
                 while True:
                     global latest_url
                     post = get_latest_post(hashtag.content)
-                    text, url = formatPost(post)
-                    if latest_url != url:
+                    text, url, author = formatPost(post)
+                    text = text[:2000]
+                    if latest_url != url and author != '4939318395':
                         print('current latesttext ' + latest_url)
                         print('new post? ' + text)
+                        print('author? ' + author)
                         latest_url = url
                         await message.channel.send(instarole + "\n" + text + " " + url)
                     await asyncio.sleep(QUERYING_SPEED)
@@ -68,6 +71,11 @@ class MyClient(discord.Client):
             await message.channel.send('I am still functional! Thanks for checking on me, uwu')
         elif message.content == 'gods lesson':
             await message.channel.send('Step 1: Dump your girl(s). Step 2: Acquire god pussy. Let it be put on the record.')
+        elif message.content == 'fuck squiggles':
+            await message.channel.send('LOL I HAVE NO WORDS FOR THAT CUNT')
+        elif message.content == 'who is squiggles':
+            await message.channel.send('Processing...')
+            await message.channel.send('Here are your results: Squiggle, a massive fucking dumb cunt.')
         else:
             pass
     
