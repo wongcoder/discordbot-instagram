@@ -15,7 +15,7 @@ listDb = TinyDB('urls.json')
 blockDb = TinyDB('blocked.json')
 
 # both only store a string, url and author respectively.
-Url = Query()
+UrlQ = Query()
 BlockedAuthor = Query()
 
 # Init Discord client
@@ -91,7 +91,7 @@ class MyClient(discord.Client):
                         foundBlock = blockDb.search(BlockedAuthor.author == author)
                         
                         # check if url is in seen list
-                        seenURL = listDb.search(Url == url)
+                        seenURL = listDb.search(UrlQ.url == url)
                         
                         # if not, add it
                         if seenURL == []:
