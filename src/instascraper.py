@@ -1,9 +1,10 @@
 # Used InstaData as a frame of reference https://github.com/hindamosh/InstaData
 
+import sys
 import requests
 from datetime import datetime
 
-# should be private but idk python syntax
+# Private functions
 def insta_scraper(searched_tag):
     print('Attempting to search')
     print(datetime.now())
@@ -22,7 +23,22 @@ def insta_scraper(searched_tag):
     print('Out of scope error?')
     return []
 
-# export
+
+# Public functions
+def author_lookup(url):
+    url = url + '?__a=1'
+    try: 
+        response = requests.get(url, timeout=5)
+        data = response.json()
+    except:
+        print('exception occured', sys.exc_info()[0])
+        print('author_lookup for link:' + url + 'failed')
+        return '404: ID not found!'
+    else:
+        author = data['graphql']['shortcode_media']['owner']['id']
+        return author
+
+
 def get_latest_post(searched_tag):
     posts = insta_scraper(searched_tag)
     print(insta_scraper)
@@ -45,3 +61,7 @@ if __name__ == "__main__":
     latest_post = get_latest_post('balisongsale')
     print(str(latest_post))
     print('If the above wasnt None, it passed!')
+
+    # unit test author_lookup
+    author_lookup('https://www.instagram.com/p/B7YdRpPHzRj/')
+    print('if this was not null, test was OK. otherwise, try new post')
