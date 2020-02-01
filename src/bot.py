@@ -2,10 +2,21 @@ import os
 
 import discord
 import asyncio
-from instascraper import get_latest_post
-from setup import get_env
 
+from instascraper import get_latest_post, author_lookup
+from setup import get_env
+from tinydb import TinyDB, Query
+
+# fetch env: USER_ID is authorized user (usually bot owner)
 DISCORD_TOKEN, USER_ID = get_env()
+
+# init db
+listDb = TinyDB('urls.json')
+blockDb = TinyDB('blocked.json')
+
+# both only store a string, url and author respectively.
+Url = Query()
+BlockedAuthor = Query()
 
 # Init Discord client
 client = discord.Client()
@@ -13,7 +24,11 @@ client = discord.Client()
 # globals
 latest_url = 'None'
 QUERYING_SPEED = 5
+TIMEOUT = 5
 
+# delete posts 
+
+# formats post 
 def formatPost(post):
     text = post['edge_media_to_caption']['edges'][0]['node']['text']
     url = 'https://www.instagram.com/p/' + post['shortcode'] + '/'
@@ -32,39 +47,65 @@ class MyClient(discord.Client):
             return 
 
         channel = message.channel
-        if message.content.startswith('$fetch') and (channel.permissions_for(message.author).administrator == True or message.author.id == USER_ID) :
-            print('evaluate as true')
-            await message.channel.send('Please enter the hashtag.')
 
+        # if admin
+        if channel.permissions_for(message.author).administrator == True or message.author.id == USER_ID :
+            # used to validate that only the same person who init message can reply
             def is_same_author(m):
                 return m.author == message.author
+        
+            if message.content.startswith('$block'):
+                await message.channel.send('Please copy and paste a post from the offending user.')
+                
+                try:
+                    post_url = await self.wait_for('message', check=is_same_author, timeout=TIMEOUT)
+                except asyncio.TimeoutError:
+                    return await channel.send('You took too long. Please restart the command.')
+                
+                block_author = author_lookup(post_url)
+                blockDb.insert({'author': block_author})
 
-            try:
-                hashtag = await self.wait_for('message', check=is_same_author, timeout=5.0)
-            except asyncio.TimeoutError:
-                return await channel.send('Sorry, you took too long.')
-            
-            instarole = 'Please add an instasquad role to be mentioned.'
-            for role in message.guild.roles:
-                print(role.name)
-                if role.name == 'instasquad':
-                    instarole = role.mention
+            if message.content.startswith('$fetch'):
+                await message.channel.send('Please enter the hashtag.')
 
-            async def poller():
-                # don't forget to repoll!f
-                while True:
-                    global latest_url
-                    post = get_latest_post(hashtag.content)
-                    text, url, author = formatPost(post)
-                    text = text[:2000]
-                    if latest_url != url and author != '4939318395':
-                        print('current latesttext ' + latest_url)
-                        print('new post? ' + text)
-                        print('author? ' + author)
-                        latest_url = url
-                        await message.channel.send(instarole + "\n" + text + " " + url)
-                    await asyncio.sleep(QUERYING_SPEED)
-            self.bg_task = self.loop.create_task(poller())
+                try:
+                    hashtag = await self.wait_for('message', check=is_same_author, timeout=TIMEOUT)
+                except asyncio.TimeoutError:
+                    return await channel.send('Sorry, you took too long.')
+                 
+                instarole = 'Please add an instasquad role to be mentioned.'
+                for role in message.guild.roles:
+                    print(role.name)
+                    if role.name == 'instasquad':
+                        instarole = role.mention
+
+                async def poller():
+                    # don't forget to repoll!f
+                    while True:
+                        global latest_url
+                        post = get_latest_post(hashtag.content)
+                        text, url, author = formatPost(post)
+                        text = text[:2000] # limits text to 2000 characters
+                        
+                        # check if author is in block list
+                        foundBlock = blockDb.search(BlockedAuthor.author == author)
+                        
+                        # check if url is in seen list
+                        seenURL = listDb.search(Url == url)
+                        
+                        # if not, add it
+                        if seenURL == []:
+                            seenURL.insert({'url': url})
+
+                        # litearlly only blocks squiggles
+                        if latest_url != url and author != '4939318395' and foundBlock == [] and seenURL == []:
+                            print('current latesttext ' + latest_url)
+                            print('new post? ' + text)
+                            print('author? ' + author)
+                            latest_url = url
+                            await message.channel.send(instarole + "\n" + text + " " + url)
+                        await asyncio.sleep(QUERYING_SPEED)
+                self.bg_task = self.loop.create_task(poller())
 
             # await message.channel.send('Did it work?')
         elif message.content == '$test':
@@ -76,6 +117,7 @@ class MyClient(discord.Client):
         elif message.content == 'who is squiggles':
             await message.channel.send('Processing...')
             await message.channel.send('Here are your results: Squiggle, a massive fucking dumb cunt.')
+        
         else:
             pass
     
