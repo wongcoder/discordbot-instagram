@@ -95,7 +95,7 @@ class MyClient(discord.Client):
                         
                         # if not, add it
                         if seenURL == []:
-                            seenURL.insert({'url': url})
+                            listDb.insert({'url': url})
 
                         # litearlly only blocks squiggles
                         if latest_url != url and author != '4939318395' and foundBlock == [] and seenURL == []:
