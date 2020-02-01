@@ -58,11 +58,11 @@ class MyClient(discord.Client):
                 await message.channel.send('Please copy and paste a post from the offending user.')
                 
                 try:
-                    post_url = await self.wait_for('message', check=is_same_author, timeout=TIMEOUT)
+                    post_message = await self.wait_for('message', check=is_same_author, timeout=TIMEOUT)
                 except asyncio.TimeoutError:
                     return await channel.send('You took too long. Please restart the command.')
                 
-                block_author = author_lookup(post_url)
+                block_author = author_lookup(post_message.content)
                 blockDb.insert({'author': block_author})
 
             if message.content.startswith('$fetch'):
@@ -108,7 +108,7 @@ class MyClient(discord.Client):
                 self.bg_task = self.loop.create_task(poller())
 
             # await message.channel.send('Did it work?')
-        elif message.content == '$test':
+        if message.content == '$test':
             await message.channel.send('I am still functional! Thanks for checking on me, uwu')
         elif message.content == 'gods lesson':
             await message.channel.send('Step 1: Dump your girl(s). Step 2: Acquire god pussy. Let it be put on the record.')
