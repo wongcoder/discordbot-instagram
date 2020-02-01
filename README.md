@@ -14,9 +14,9 @@ Since I'm too small brane to realize how to use Pipfiles in the same way we use 
 
 `pip install requests discord.py tinydb python-dotenv asyncio`
 
-# How it works
+# How It Works
 
-It avoids the Instagram API, which would require a nasty amount of OAuth (just saying, they could totally reduce how intensive my calls are if they made certain aspects about the API open...)
+It avoids the Instagram API, and instead goes through the hidden API (?__a=1) which would require a nasty amount of OAuth (just saying, they could totally reduce how intensive my calls are if they made certain aspects about the API open...)
 
 First, it calls a GET request. The program that we're usings, requests, happens to have a built in JSON formatter, which it then returns the JSON as a dict. Then it's just a matter of breaking down that dict into usable data!
 
