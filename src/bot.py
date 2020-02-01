@@ -56,7 +56,7 @@ class MyClient(discord.Client):
                     global latest_url
                     post = get_latest_post(hashtag.content)
                     text, url, author = formatPost(post)
-                    text = text[:2000]
+                    text = text[:1900]
                     if latest_url != url and author != '4939318395':
                         print('current latesttext ' + latest_url)
                         print('new post? ' + text)
