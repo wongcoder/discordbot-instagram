@@ -1,17 +1,28 @@
 # Used InstaData as a frame of reference https://github.com/hindamosh/InstaData
 
+import os
 import sys
 import requests
 from datetime import datetime
+from dotenv import load_dotenv
+
+# acquire session cookie
+load_dotenv()
+COOKIE = os.getenv("COOKIE")
+
+headers = {
+    'Cookie': 'sessionid=' + COOKIE
+}
 
 # Private functions
 def insta_scraper(searched_tag):
+    print(COOKIE)
     print('Attempting to search')
     print(datetime.now())
     url = 'https://www.instagram.com/explore/tags/'+ searched_tag + '/?__a=1'
     try:  
         # get json data from requests library
-        response = requests.get(url, timeout=5)
+        response = requests.request("GET", url, headers=headers, timeout=5)
         data = response.json()
     except:
         print('request failed')
@@ -28,7 +39,7 @@ def insta_scraper(searched_tag):
 def author_lookup(url):
     url = url + '?__a=1'
     try: 
-        response = requests.get(url, timeout=5)
+        response = requests.request("GET", url, headers=headers, timeout=5)
         data = response.json()
     except:
         print('exception occured', sys.exc_info()[0])
@@ -63,5 +74,5 @@ if __name__ == "__main__":
     print('If the above wasnt None, it passed!')
 
     # unit test author_lookup
-    author_lookup('https://www.instagram.com/p/B7YdRpPHzRj/')
+    print(author_lookup('https://www.instagram.com/p/B7YdRpPHzRj/'))
     print('if this was not null, test was OK. otherwise, try new post')
