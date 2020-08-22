@@ -5,6 +5,7 @@ def first_run():
     print('Welcome to the initial setup process.')
     DISCORD_TOKEN = input('Please enter your DISCORD_TOKEN: ')
     USER_ID = input('Please enter your user ID that you want the bot to respond to: ')
+    COOKIE = input('Please enter a session cookie that you received from instagram (ignore the session part): ')
      # Get token inputs
 
     cur_path = os.path.dirname(__file__)
@@ -14,6 +15,7 @@ def first_run():
     with open(new_path, 'w+') as f:
         f.write("DISCORD_TOKEN=" + DISCORD_TOKEN + "\n")
         f.write("USER_ID=" + USER_ID + "\n")
+        f.write("COOKIE=" + COOKIE + "\n")
         f.close()
         
     print('Thank you. Stored your variables in .env . If you are unable to connect, either delete the .env file, or edit it.')
@@ -41,7 +43,8 @@ if __name__ == "__main__":
     os.remove(new_path)
 
     print('Make sure it asks you for a prompt')
-    DISCORD_TOKEN, USER_ID = get_env()
+    DISCORD_TOKEN, USER_ID, COOKIE = get_env()
     print('Okay, now checking if empty')
     print(DISCORD_TOKEN)
     print(USER_ID)
+    print(COOKIE)
