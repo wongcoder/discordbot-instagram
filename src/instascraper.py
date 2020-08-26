@@ -3,76 +3,51 @@
 import os
 import sys
 import requests
+import logging
 from datetime import datetime
 from dotenv import load_dotenv
 
-# acquire session cookie
 load_dotenv()
-COOKIE = os.getenv("COOKIE")
 
-headers = {
-    'Cookie': 'sessionid=' + COOKIE
-}
+def rotate_cookies():
+    # grab random cookie
+    pass
 
-# Private functions
-def insta_scraper(searched_tag):
-    print(COOKIE)
-    print('Attempting to search')
-    print(datetime.now())
+# internal function used to make instagram call 
+def query_instagram(url):
+    headers = { 'Cookie': 'sessionid=' + os.getenv("COOKIE") }
+    
+    data = None
+
+    # perform attempt to try again 
+    attempt = 0
+    while data is None and attempt < 10:
+        attempt += 1
+        try: 
+            response = requests.request("GET", url, headers=headers, timeout=5)
+            data = response.json()
+        except: 
+            logging.exception("Error occured while attempting to query URL")
+    
+    return data
+
+# public
+def get_post(searched_tag):
     url = 'https://www.instagram.com/explore/tags/'+ searched_tag + '/?__a=1'
-    try:  
-        # get json data from requests library
-        response = requests.request("GET", url, headers=headers, timeout=5)
-        data = response.json()
-    except:
-        print('request failed')
-        return []
-    else:
-        posts = data['graphql']['hashtag']['edge_hashtag_to_media']['edges']
-        cleaned_posts = [i['node'] for i in posts]
-        return cleaned_posts
-    print('Out of scope error?')
-    return []
+    data = query_instagram(url)
+    if data is None: return None
+
+    posts = data['graphql']['hashtag']['edge_hashtag_to_media']['edges']
+    cleaned_posts = [i['node'] for i in posts]
+
+    return cleaned_posts[0]
 
 
 # Public functions
-def author_lookup(url):
+def get_author(url):
     url = url + '?__a=1'
-    try: 
-        response = requests.request("GET", url, headers=headers, timeout=5)
-        data = response.json()
-    except:
-        print('exception occured', sys.exc_info()[0])
-        print('author_lookup for link:' + url + 'failed')
-        return '404: ID not found!'
-    else:
-        author = data['graphql']['shortcode_media']['owner']['id']
-        return author
-
-
-def get_latest_post(searched_tag):
-    posts = insta_scraper(searched_tag)
-    print(insta_scraper)
-    while len(posts) == 0: 
-        print('Posts were empty... trying again')
-        posts = insta_scraper(searched_tag)
-    return posts[0]
-
-
-if __name__ == "__main__":
+    data = query_instagram(url)
+    if data is None: return None
     
-    # unit test insta_scraper
-    print('Running insta_scraper() test')
-    test = insta_scraper('apples')
-    if len(test) > 0: 
-        print('Passed instascraper test!') # can fail even if function works
-    
-    # unit test latest_post
-    print('Running latest_post() test')
-    latest_post = get_latest_post('balisongsale')
-    print(str(latest_post))
-    print('If the above wasnt None, it passed!')
-
-    # unit test author_lookup
-    print(author_lookup('https://www.instagram.com/p/B7YdRpPHzRj/'))
-    print('if this was not null, test was OK. otherwise, try new post')
+    author = data['graphql']['shortcode_media']['owner']['id']
+    return author

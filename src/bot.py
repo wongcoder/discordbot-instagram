@@ -1,9 +1,9 @@
-import os
+import sys,os
 
 import discord
 import asyncio
 
-from instascraper import get_latest_post, author_lookup
+from instascraper import get_post, get_author
 from setup import get_env
 from tinydb import TinyDB, Query
 
@@ -11,8 +11,10 @@ from tinydb import TinyDB, Query
 DISCORD_TOKEN, USER_ID = get_env()
 
 # init db
-listDb = TinyDB('urls.json')
-blockDb = TinyDB('blocked.json')
+sys.path.append(os.path.realpath('..'))
+
+listDb = TinyDB('db/urls.json')
+blockDb = TinyDB('db/blocked.json')
 
 # both only store a string, url and author respectively.
 UrlQ = Query()
@@ -25,8 +27,6 @@ client = discord.Client()
 latest_url = 'None'
 QUERYING_SPEED = 5
 TIMEOUT = 5
-
-# delete posts 
 
 # formats post 
 def formatPost(post):
@@ -62,7 +62,7 @@ class MyClient(discord.Client):
                 except asyncio.TimeoutError:
                     return await channel.send('You took too long. Please restart the command.')
                 
-                block_author = author_lookup(post_message.content)
+                block_author = get_author(post_message.content)
                 blockDb.insert({'author': block_author})
 
             if message.content.startswith('$fetch'):
@@ -83,7 +83,7 @@ class MyClient(discord.Client):
                     # don't forget to repoll!f
                     while True:
                         global latest_url
-                        post = get_latest_post(hashtag.content)
+                        post = get_post(hashtag.content)
                         text, url, author = formatPost(post)
                         text = text[:2000] # limits text to 2000 characters
                         

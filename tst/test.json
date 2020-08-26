@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "user_id": "test",
+      "level": "test"
+    },
+    {
+      "user_id": "test2",
+      "level": "2000"
+    }
+  ]
+}
