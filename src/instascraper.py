@@ -1,21 +1,26 @@
 # Used InstaData as a frame of reference https://github.com/hindamosh/InstaData
 
-import os
-import sys
-import requests
-import logging
+import os, sys, requests, logging, random
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 
-def rotate_cookies():
-    # grab random cookie
-    pass
+def random_cookie():
+    cookie = None
+    try: 
+        cookies = os.getenv("COOKIE").split(',')
+        index = random.randint(0, len(cookies)-1)
+        cookie = cookies[index]
+    except:
+        logging.exception("Your COOKIE is probably misconfigured.")
+        raise
+
+    return cookie
 
 # internal function used to make instagram call 
 def query_instagram(url):
-    headers = { 'Cookie': 'sessionid=' + os.getenv("COOKIE") }
+    headers = { 'Cookie': 'sessionid=' + random_cookie() }
     
     data = None
 

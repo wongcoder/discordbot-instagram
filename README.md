@@ -6,19 +6,40 @@ Here's it working in action!
 ![Sample Image](https://raw.githubusercontent.com/wongcoder/discordbot-instagram/master/sample_images/sample.png)
 
 # Deploying to AWS
-When you're deploying to AWS, make sure you create a .env.
 Get into your EC2 instance, pip install, `git clone https://github.com/wongcoder/discordbot-instagram.git`, then run the bot using `python3 ./src/bot.py`.
 
-# Dependencies
-Since I'm too small brane to realize how to use Pipfiles in the same way we use node_modules, I manually write it out. Please submit a PR with a pull request if you want to spend your time changing it. Otherwise, take the L and just use 
+The workflow has dramatically been simplified. Now, you should just have to clone the project, and make sure you have `pipenv` installed.
 
-`pip install requests discord.py tinydb python-dotenv asyncio`
+After that, you just need to run:
+
+`pipenv install`
+
+and then
+
+`pipenv run bot`.
+
+For more information, check out the Pipfile.
+
+# Dependencies
+The workflow is streamlined thanks to the use of pipenv. This is no longer needed.
+Instead of this:
+~~`pip install requests discord.py tinydb python-dotenv asyncio`~~
+
+Just run: `pipenv install`, as mentioned above.
 
 # How It Works
 
 It avoids the Instagram API, and instead goes through the hidden API (?__a=1) which would require a nasty amount of OAuth (just saying, they could totally reduce how intensive my calls are if they made certain aspects about the API open...)
 
-First, it calls a GET request. The program that we're usings, requests, happens to have a built in JSON formatter, which it then returns the JSON as a dict. Then it's just a matter of breaking down that dict into usable data!
+Since instagram really hates you though, you need to specify multiple cookies.
+
+# Cookies
+
+In order to scale this, and use an appropriate amount of time, we specify multiple accounts. These multiple accounts are randomized. I recommend about 10 to start out with, but you can go ahead and use something like 3 or 5. Just specify them in the .env like so:
+
+`COOKIE=cookie1, cookie2, cookie3`.
+
+If you do not know what I am talking about, look up how to acquire your sessionid, or open a github issue.
 
 # Usage
 
@@ -41,7 +62,12 @@ Multi Server Support
 Add a block list 
   - This can be accomplished with TinyDB and performing an author lookup before sending.
   - Task has been completed. Now in integration testing (AKA LIVE)
+
 Prevent reposts
   - Reposts occur if the previous latest post was removed.
 
-  
+Unit tests
+  - Finally added the basic framework for unit tests.
+
+Cookie rotation
+  - Added the abiltiy to rotate cookies to avoid Instagram getting angry!

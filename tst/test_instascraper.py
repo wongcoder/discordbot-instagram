@@ -4,7 +4,7 @@ import requests
 import json
 from unittest.mock import MagicMock, patch
 
-from src.instascraper import get_post, get_author, get_post, query_instagram
+from src.instascraper import get_post, get_author, get_post, query_instagram, random_cookie
 
 class test_instascraper(unittest.TestCase):
   SEARCHED_TAG = "apple"
@@ -38,12 +38,20 @@ class test_instascraper(unittest.TestCase):
     }
   }
 
-  class MockResponse:
-    encoding = True
-    content = True
+  COOKIES = ['oniichan', 'baka', 'daikirai']
+  MOCKED_COOKIE = ','.join(COOKIES)
 
-    def __init__(self, text):
-      self.text = json.dumps(text)
+  @patch('src.instascraper.os.getenv')
+  def test_rotate_cookies(self, mock):
+    mock.return_value = self.MOCKED_COOKIE
+    cookies = random_cookie()
+    self.assertIn(cookies, self.COOKIES)
+
+  
+  @patch('src.instascraper.os.getenv')
+  def test_bad_cookies(self, mock):
+    mock.return_value = None
+    self.assertRaises(Exception, random_cookie)
 
   # Check intended behavior of functions
   @patch('src.instascraper.requests.request') 
@@ -84,4 +92,4 @@ class test_instascraper(unittest.TestCase):
   def test_query_instagram_outage(self, mock):
     mock.return_value = MagicMock()
     mock.return_value.json = "NOT A JSON"
-    self.assertRaises(TypeError, query_instagram(self.AUTHOR_URL))
+    self.assertIsNone(query_instagram(self.AUTHOR_URL))
